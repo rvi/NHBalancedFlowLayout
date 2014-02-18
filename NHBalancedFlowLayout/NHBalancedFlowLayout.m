@@ -257,7 +257,7 @@
         
         if (indexPath.section + 1 < [self.collectionView numberOfSections])
         {
-            UICollectionViewLayoutAttributes *nextHeaderAttributes = [super layoutAttributesForSupplementaryViewOfKind:kind atIndexPath:[NSIndexPath indexPathForItem:0 inSection:indexPath.section+1]];
+            UICollectionViewLayoutAttributes *nextHeaderAttributes = [self layoutAttributesForSupplementaryViewOfKind:kind atIndexPath:[NSIndexPath indexPathForItem:0 inSection:indexPath.section+1]];
             nextHeaderOrigin = nextHeaderAttributes.frame.origin;
         }
         
