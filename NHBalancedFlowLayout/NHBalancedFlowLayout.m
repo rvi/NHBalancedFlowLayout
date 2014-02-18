@@ -68,7 +68,7 @@
 {
     // set to NULL so it is not released by accident in dealloc
     _itemFrameSections = NULL;
-    
+    self.stickyHeaders = NO;
     self.sectionInset = UIEdgeInsetsMake(10, 10, 10, 10);
     self.minimumLineSpacing = 10;
     self.minimumInteritemSpacing = 10;
@@ -194,6 +194,32 @@
         }
     }
     
+    if (self.stickyHeaders)
+    {
+        NSMutableIndexSet *missingSections = [NSMutableIndexSet indexSet];
+        for (NSUInteger idx = 0; idx < [layoutAttributes count]; idx++)
+        {
+            UICollectionViewLayoutAttributes *layoutAttribute = layoutAttributes[idx];
+            
+            if (layoutAttribute.representedElementCategory == UICollectionElementCategoryCell) {
+                [missingSections addIndex:layoutAttribute.indexPath.section];  // remember that we need to layout header for this section
+            }
+            if ([layoutAttribute.representedElementKind isEqualToString:UICollectionElementKindSectionHeader]) {
+                [layoutAttributes removeObjectAtIndex:idx];  // remove layout of header done by our super, we will do it right later
+                idx--;
+            }
+        }
+        
+        // layout all headers needed for the rect using self code
+        [missingSections enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+            
+            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:idx];
+            UICollectionViewLayoutAttributes *layoutAttribute = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader atIndexPath:indexPath];
+            [layoutAttributes addObject:layoutAttribute];
+        }];
+    }
+    
+    
     return layoutAttributes;
 }
 
@@ -221,11 +247,41 @@
         attributes = nil;
     }
     
+    if (self.stickyHeaders && attributes && [kind isEqualToString:UICollectionElementKindSectionHeader])
+    {
+        UIEdgeInsets const contentEdgeInsets = self.collectionView.contentInset;
+        CGPoint const contentOffset = CGPointMake(self.collectionView.contentOffset.x,
+                                                  self.collectionView.contentOffset.y + contentEdgeInsets.top);
+        
+        CGPoint nextHeaderOrigin = CGPointMake(INFINITY, INFINITY);
+        
+        if (indexPath.section + 1 < [self.collectionView numberOfSections])
+        {
+            UICollectionViewLayoutAttributes *nextHeaderAttributes = [super layoutAttributesForSupplementaryViewOfKind:kind atIndexPath:[NSIndexPath indexPathForItem:0 inSection:indexPath.section+1]];
+            nextHeaderOrigin = nextHeaderAttributes.frame.origin;
+        }
+        
+        CGRect frame = attributes.frame;
+        if (self.scrollDirection == UICollectionViewScrollDirectionVertical) {
+            frame.origin.y = MIN(MAX(contentOffset.y, frame.origin.y), nextHeaderOrigin.y - CGRectGetHeight(frame));
+        }
+        else { // UICollectionViewScrollDirectionHorizontal
+            frame.origin.x = MIN(MAX(contentOffset.x, frame.origin.x), nextHeaderOrigin.x - CGRectGetWidth(frame));
+        }
+        attributes.zIndex = NSIntegerMax;
+        attributes.frame = frame;
+        
+        
+    }
+    
     return attributes;
 }
 
 - (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds
 {
+    return YES;
+    
+    // TODO: dirty !
     CGRect oldBounds = self.collectionView.bounds;
     if (CGRectGetWidth(newBounds) != CGRectGetWidth(oldBounds) || CGRectGetHeight(newBounds) != CGRectGetHeight(oldBounds)) {
         return YES;

@@ -21,6 +21,9 @@
 // The preferred size for each row measured in the scroll direction
 @property (nonatomic) CGFloat preferredRowSize;
 
+// Use this to stick the headers to the origin.
+@property (nonatomic, assign) BOOL stickyHeaders;
+
 @end
 
 

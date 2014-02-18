@@ -46,6 +46,7 @@
     [super viewDidLoad];
     
     NHBalancedFlowLayout *layout = (NHBalancedFlowLayout *)self.collectionViewLayout;
+    layout.stickyHeaders = YES;
     layout.headerReferenceSize = CGSizeMake(HEADER_SIZE, HEADER_SIZE);
     layout.footerReferenceSize = CGSizeMake(FOOTER_SIZE, FOOTER_SIZE);
 }
@@ -61,7 +62,7 @@
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
-    return 1;
+    return 3;
 }
 
 - (NSInteger)collectionView:(UICollectionView *)view numberOfItemsInSection:(NSInteger)section;
