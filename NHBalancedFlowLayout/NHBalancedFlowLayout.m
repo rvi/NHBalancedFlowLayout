@@ -257,7 +257,7 @@
         
         if (indexPath.section + 1 < [self.collectionView numberOfSections])
         {
-            UICollectionViewLayoutAttributes *nextHeaderAttributes = [super layoutAttributesForSupplementaryViewOfKind:kind atIndexPath:[NSIndexPath indexPathForItem:0 inSection:indexPath.section+1]];
+            UICollectionViewLayoutAttributes *nextHeaderAttributes = [self layoutAttributesForSupplementaryViewOfKind:kind atIndexPath:[NSIndexPath indexPathForItem:0 inSection:indexPath.section+1]];
             nextHeaderOrigin = nextHeaderAttributes.frame.origin;
         }
         
@@ -280,14 +280,6 @@
 - (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds
 {
     return YES;
-    
-    // TODO: dirty !
-    CGRect oldBounds = self.collectionView.bounds;
-    if (CGRectGetWidth(newBounds) != CGRectGetWidth(oldBounds) || CGRectGetHeight(newBounds) != CGRectGetHeight(oldBounds)) {
-        return YES;
-    }
-    
-    return NO;
 }
 
 #pragma mark - Layout helpers
@@ -441,6 +433,41 @@
 - (void)setPreferredRowSize:(CGFloat)preferredRowHeight
 {
     _preferredRowSize = preferredRowHeight;
+    
+    [self invalidateLayout];
+}
+
+- (void)setSectionInset:(UIEdgeInsets)sectionInset
+{
+    _sectionInset = sectionInset;
+    
+    [self invalidateLayout];
+}
+
+- (void)setMinimumLineSpacing:(CGFloat)minimumLineSpacing
+{
+    _minimumLineSpacing = minimumLineSpacing;
+    
+    [self invalidateLayout];
+}
+
+- (void)setMinimumInteritemSpacing:(CGFloat)minimumInteritemSpacing
+{
+    _minimumInteritemSpacing = minimumInteritemSpacing;
+    
+    [self invalidateLayout];
+}
+
+- (void)setHeaderReferenceSize:(CGSize)headerReferenceSize
+{
+    _headerReferenceSize = headerReferenceSize;
+    
+    [self invalidateLayout];
+}
+
+- (void)setFooterReferenceSize:(CGSize)footerReferenceSize
+{
+    _footerReferenceSize = footerReferenceSize;
     
     [self invalidateLayout];
 }
