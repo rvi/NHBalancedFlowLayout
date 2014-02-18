@@ -280,14 +280,6 @@
 - (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds
 {
     return YES;
-    
-    // TODO: dirty !
-    CGRect oldBounds = self.collectionView.bounds;
-    if (CGRectGetWidth(newBounds) != CGRectGetWidth(oldBounds) || CGRectGetHeight(newBounds) != CGRectGetHeight(oldBounds)) {
-        return YES;
-    }
-    
-    return NO;
 }
 
 #pragma mark - Layout helpers
