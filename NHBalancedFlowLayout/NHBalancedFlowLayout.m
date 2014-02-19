@@ -279,7 +279,17 @@
 
 - (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds
 {
-    return YES;
+    BOOL shouldInvalidateLayout = NO;
+    CGRect oldBounds = self.collectionView.bounds;
+    if (self.stickyHeaders)
+    {
+        shouldInvalidateLayout = YES;
+    }
+    else if (CGRectGetWidth(newBounds) != CGRectGetWidth(oldBounds) || CGRectGetHeight(newBounds) != CGRectGetHeight(oldBounds)) {
+        shouldInvalidateLayout = YES;
+    }
+    
+    return shouldInvalidateLayout;
 }
 
 #pragma mark - Layout helpers
