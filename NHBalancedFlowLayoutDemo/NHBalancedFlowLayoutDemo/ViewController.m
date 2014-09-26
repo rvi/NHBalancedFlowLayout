@@ -86,6 +86,7 @@
             NSIndexPath *currentIndexPathForCell = [collectionView indexPathForCell:cell];
             if (currentIndexPathForCell.row == rowIndex) {
                 cell.imageView.image = image;
+                cell.imageView.frame = cell.bounds;
             }
         });
     });
